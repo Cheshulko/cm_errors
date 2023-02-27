@@ -1,39 +1,114 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Architectural approach to datasource`s json error parsing & handling with dynamic data
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+Let`s support such error types:
+`error_type_model.dart`
+
+```dart
+@JsonEnum()
+enum ErrorTypeModel {
+  @JsonValue('custom_1')
+  custom1,
+  @JsonValue('custom_2')
+  custom2,
+}
+```
+with corresponding jsons
+* custom_1 error`s json
+```json
+{
+  "id": "322",
+  "code": "400",
+  "type": "custom_1",
+  "data": {
+    "errors": [
+      {
+        "id": "1",
+        "type": "unknown",
+        "value": "Unknown value"
+      },
+      {
+        "id": "2",
+        "type": "not_valid",
+        "value": "Not valid value"
+      }
+    ]
+  }
+}
+```
+* custom_2 error`s json
+```json
+{
+  "id": "322",
+  "code": "400",
+  "type": "custom_2",
+  "data": "String data"
+}
+```
+
+`type` from json should be mapped to `ErrorTypeModel` type
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add any custom error`s type to `ErrorTypeModel` enum in `error_type_model.dart`
+For each type in `ErrorTypeModel` we should have model class (see `custom_error_1_model.dart` example)
+```dart
+class MyCustomErrorModel extends ErrorModel<MyCustomErrorModelData?> {
+...
+}
+```
+with `fromJsonT` dynamic data`s type parser (see `CustomError1Model.fromJson` in `custom_error_1_model.dart`)
+```dart 
+T Function(Object? json) fromJsonT
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
 ```dart
-const like = 'sample';
+final errorJson1 = json.decode('''
+{
+  "id": "322",
+  "code": "400",
+  "type": "custom_1",
+  "data": {
+    "errors": [
+      {
+        "id": "1",
+        "type": "unknown",
+        "value": "Unknown value"
+      },
+      {
+        "id": "2",
+        "type": "not_valid",
+        "value": "Not valid value"
+      }
+    ]
+  }
+}
+      ''');
+
+  final errorJson2 = json.decode('''
+{
+  "id": "322",
+  "code": "400",
+  "type": "custom_2",
+  "data": "String data"
+}
+      ''');
+
+  // Here we need to manually cast ce1 to CustomError1Model to get the proper data class (not dynamic)
+  final ce1 = ErrorModel.fromJson(errorJson1);
+  final ce2 = ErrorModel.fromJson(errorJson2);
+  
+  final CE1ErrorsModel? data1 = (ce1 as CustomError1Model).data;
+  final String? data2 = (ce2 as CustomError2Model).data;
+
+  // Here cast is not needed
+  final ce1Typed = CustomError1Model.fromJson(errorJson1);
+  final ce2Typed = CustomError2Model.fromJson(errorJson1);
+  
+  final CE1ErrorsModel? data1Typed = ce1Typed.data;
+  final String? data2Typed = ce2Typed.data;
 ```
 
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
