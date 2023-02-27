@@ -10,9 +10,6 @@ class CustomError1Model extends ErrorModel<CE1ErrorsModel?> {
           data: errorBase.data,
         );
 
-  @override
-  CE1ErrorsModel? get data => super.data;
-
   factory CustomError1Model.fromJson(Map<String, dynamic> json) {
     return CustomError1Model._fromBase(
       ErrorModel<CE1ErrorsModel?>.fromJsonT(
