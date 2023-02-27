@@ -2,7 +2,7 @@ Architectural approach to datasource`s json error parsing & handling with dynami
 
 ## Features
 
-Let`s support such error types:
+Let\`s support such error types:
 `error_type_model.dart`
 
 ```dart
@@ -37,7 +37,7 @@ with corresponding jsons
   }
 }
 ```
-* custom_2 error`s json
+* custom_2 error\`s json
 ```json
 {
   "id": "322",
@@ -51,14 +51,14 @@ with corresponding jsons
 
 ## Getting started
 
-Add any custom error`s type to `ErrorTypeModel` enum in `error_type_model.dart`
+Add any custom error\`s type to `ErrorTypeModel` enum in `error_type_model.dart`
 For each type in `ErrorTypeModel` we should have model class (see `custom_error_1_model.dart` example)
 ```dart
 class MyCustomErrorModel extends ErrorModel<MyCustomErrorModelData?> {
 ...
 }
 ```
-with `fromJsonT` dynamic data`s type parser (see `CustomError1Model.fromJson` in `custom_error_1_model.dart`)
+with `fromJsonT` dynamic data\`s type parser (see `CustomError1Model.fromJson` in `custom_error_1_model.dart`)
 ```dart 
 T Function(Object? json) fromJsonT
 ```
